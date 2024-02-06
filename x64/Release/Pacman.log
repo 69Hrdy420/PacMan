@@ -1,0 +1,13 @@
+﻿  BodyPart.cpp
+  Entity.cpp
+  Ghost.cpp
+  Main.cpp
+  Options.cpp
+  Shapes.cpp
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\Shapes.cpp(4,39): warning C4305: inicializování: zkrácení z: double na: float
+  Window.cpp
+  Vytváří se kód.
+  Previous IPDB not found, fall back to full compilation.
+  All 167 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Vytváření kódu se dokončilo.
+  Pacman.vcxproj -> C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\Pacman.exe

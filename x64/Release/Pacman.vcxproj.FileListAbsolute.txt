@@ -1,0 +1,11 @@
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\Pacman.vcxproj.CopyComplete
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\Pacman.exe
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\sfml-graphics-2.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\sfml-window-2.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\sfml-system-2.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\freetype.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\zlib1.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\bz2.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\libpng16.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\brotlidec.dll
+C:\Users\oem\Plocha\Pac-Man\Pac-Man\x64\Release\brotlicommon.dll
