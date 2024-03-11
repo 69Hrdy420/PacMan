@@ -15,7 +15,7 @@ BodyPart& BodyPart::operator=(const BodyPart& other)
     return *this;
 }
 
-void BodyPart::draw(sf::Vector2f pos, sf::Color color)
+void BodyPart::draw(sf::RenderWindow& window, sf::Vector2f pos, sf::Color color)
 {
 	shape.setFillColor(color);
 	shape.setPosition(pos + local_pos);

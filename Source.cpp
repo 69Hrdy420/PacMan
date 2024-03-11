@@ -2,18 +2,22 @@
 //#include "PacMan.h"
 #include "Window.h"
 #include <iostream>
-#include "Map_Editor.h"
+#include "Map_Editor2.h"
 
-// VYSVETLIT PROC JE TO ANIMOVANE JAKO OD RETARDA
-// Opravit nebo smazat Map editor
+// VYSVETLIT PROC JE TO ANIMOVANE JAKO OD RETARDA//
 
 int main()
 {
+	//sf::RenderWindow* window = Windows::get_new();
+	sf::RenderWindow window(sf::VideoMode(Options::window_size_x, Options::window_size_y), "Pac-Man");
 	Map_Editor editor(window, 10, 10);
-	for(;;)
-	{
-		editor.run();
-	}
+	//for(;;)
+	//{
+	//	window->clear();
+	//	editor.run();
+	//	window->display();
+	//}
+	Windows::deinitialize();
 	return 0;
 }
 
@@ -24,8 +28,8 @@ int main()
 //    auto time = std::chrono::high_resolution_clock::now();
 //    Ghost ghost(sf::Color::Yellow, time);
 //    PacMan pacman(sf::Color::Blue, time);
-//    ghost.pos = { 700, 400 };
-//    pacman.pos = { 500, 400 };
+//    ghost.pos = { 900, 400 };
+//    pacman.pos = { 300, 400 };
 //    while (window.isOpen())
 //    {
 //        sf::Event event;
@@ -40,8 +44,8 @@ int main()
 //
 //        pacman.draw();
 //        ghost.draw();
-//        //window.draw(x_axis, 2, sf::Lines);
-//        //window.draw(y_axis, 2, sf::Lines);
+//        window.draw(x_axis, 2, sf::Lines);
+//        window.draw(y_axis, 2, sf::Lines);
 //
 //        window.display();
 //    }

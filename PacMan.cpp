@@ -58,13 +58,13 @@ void PacMan::animate(std::chrono::milliseconds time_passed)
 	}
 	mouth.setPosition(pos);
 }
-void PacMan::draw()
+void PacMan::draw(sf::RenderWindow& window)
 {
 	auto current_time = std::chrono::high_resolution_clock::now();
 	auto time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_animation);
 	last_animation = current_time;
 	animate(time_passed);
 
-	body[0].draw(pos, color);
+	body[0].draw(window, pos, color);
 	window.draw(mouth, render_states);
-}//
+}

@@ -1,18 +1,17 @@
-#pragma once
+ #pragma once
 #include "Entity.h"
-
-static enum Direction
-{
-    RIGHT, LEFT, UP, DOWN
-};
 
 class PacMan :
     public Entity
 {
 public:
     PacMan(sf::Color color, std::chrono::high_resolution_clock::time_point game_start);
-    virtual void draw() override;
+    virtual void draw(sf::RenderWindow& window) override;
 private:
+    enum Direction
+    {
+        RIGHT, LEFT, UP, DOWN
+    };
     virtual void animate(std::chrono::milliseconds time_passed) override;
     sf::ConvexShape mouth;
     static uint16_t mouth_points;
