@@ -1,0 +1,2 @@
+https://github.com/69Hrdy420/Pac-Man filter=lfs diff=lfs merge=lfs -text
+x64/Debug/Pacman.pdb filter=lfs diff=lfs merge=lfs -text
