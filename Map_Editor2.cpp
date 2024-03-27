@@ -1,9 +1,10 @@
 #include "Map_Editor2.h"
 #include <iostream>
+#include <functional>
 
 static const sf::Vector2f objects_starting_positions = { 200.f , 100.f };
 
-Map_Editor::Map_Editor(sf::RenderWindow& window, uint16_t x, uint16_t y)
+Map_Editor::Map_Editor(Window& window, uint16_t x, uint16_t y)
 	:window(window)
 {
 	local_bounds.setFillColor(sf::Color::Black);
@@ -58,7 +59,7 @@ sf::Vector2i Map_Editor::get_peer_pos(sf::Vector2i peer)
 
 void Map_Editor::draw()
 {
-	window.draw(local_bounds);
+	window.window.draw(local_bounds);
 	draw_paths();
 	draw_objects();
 	draw_bridges();
@@ -72,7 +73,7 @@ void Map_Editor::draw_paths()
 	{
 		vertexes[0].position = static_cast<sf::Vector2f>(line.A) * Options::object_size / 2.f + objects_starting_positions;
 		vertexes[1].position = static_cast<sf::Vector2f>(line.B) * Options::object_size / 2.f + objects_starting_positions;
-		window.draw(vertexes, 2, sf::Lines);
+		window.window.draw(vertexes, 2, sf::Lines);
 	}
 	if (path_buffer.is_creating)
 	{
@@ -95,16 +96,16 @@ void Map_Editor::draw_paths()
 		vertexes[1].position.x = path_buffer.pos.x;
 		vertexes[1].position.y = path_buffer.pos.y + Options::object_size / 2 * path_buffer.length;
 	}
-	window.draw(vertexes, 2, sf::Lines);
+	window.window.draw(vertexes, 2, sf::Lines);
 }
 
 void Map_Editor::draw_objects()
 {
-	sf::CircleShape peer(1.f, 24);
+	sf::CircleShape peer(Options::object_size / 60, Options::num_circle_points);
 	peer.setFillColor(sf::Color::White);
 	peer.setOrigin((peer.getRadius()), (peer.getRadius()));
 
-	sf::CircleShape coin(5.f, 24);
+	sf::CircleShape coin(Options::object_size / 15, Options::num_circle_points);
 	coin.setFillColor(sf::Color::Yellow);
 	coin.setOrigin((coin.getRadius()), (coin.getRadius()));
 
@@ -114,12 +115,43 @@ void Map_Editor::draw_objects()
 			if (objects[x][y] == NONE)
 			{
 				peer.setPosition(static_cast<sf::Vector2f>(get_peer_pos({ x, y })));
-				window.draw(peer);
+				window.window.draw(peer);
 			}
 			else if (objects[x][y] == COIN)
 			{
 				coin.setPosition(static_cast<sf::Vector2f>(get_peer_pos({ x, y })));
-				window.draw(coin);
+				window.window.draw(coin);
+			}
+			else if (objects[x][y] == STARTPOS)
+			{
+				coin.setFillColor(sf::Color::Green);
+				coin.setRadius(Options::object_size / 7.5);
+				coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+				coin.setPosition(static_cast<sf::Vector2f>(get_peer_pos({ x, y })));
+				window.window.draw(coin);
+				coin.setFillColor(sf::Color::Yellow);
+				coin.setRadius(Options::object_size / 15);
+				coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+			}
+			else if (objects[x][y] == GHOST1)
+			{
+				coin.setFillColor(sf::Color::Red);
+				coin.setRadius(Options::object_size / 7.5);
+				coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+				coin.setPosition(static_cast<sf::Vector2f>(get_peer_pos({ x, y })));
+				window.window.draw(coin);
+				coin.setFillColor(sf::Color::Yellow);
+				coin.setRadius(Options::object_size / 15);
+				coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+			}
+			else if (objects[x][y] == POWERUP)
+			{
+				coin.setRadius(Options::object_size / 7.5);
+				coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+				coin.setPosition(static_cast<sf::Vector2f>(get_peer_pos({ x, y })));
+				window.window.draw(coin);
+				coin.setRadius(Options::object_size / 15);
+				coin.setOrigin((coin.getRadius()), (coin.getRadius()));
 			}
 	}
 }
@@ -133,20 +165,20 @@ void Map_Editor::draw_bridges()
 		{
 			vertexes[0].position = objects_starting_positions + i * sf::Vector2f(0, Options::object_size / 2);
 			vertexes[1].position = vertexes[0].position - sf::Vector2f(Options::object_size / 4, 0);
-			window.draw(vertexes, 2, sf::Lines);
+			window.window.draw(vertexes, 2, sf::Lines);
 			vertexes[0].position = objects_starting_positions + i * sf::Vector2f(0, Options::object_size / 2) + sf::Vector2f((objects.size() - 1) * Options::object_size / 2, 0);
 			vertexes[1].position = vertexes[0].position + sf::Vector2f(Options::object_size / 4, 0);
-			window.draw(vertexes, 2, sf::Lines);
+			window.window.draw(vertexes, 2, sf::Lines);
 		}
 	for (float i = 0; i < vertical_bridges.size(); i++)
 		if (vertical_bridges[i] == true)
 		{
 			vertexes[0].position = objects_starting_positions + i * sf::Vector2f(Options::object_size / 2, 0);
 			vertexes[1].position = vertexes[0].position - sf::Vector2f(0, Options::object_size / 4);
-			window.draw(vertexes, 2, sf::Lines);
+			window.window.draw(vertexes, 2, sf::Lines);
 			vertexes[0].position = objects_starting_positions + i * sf::Vector2f(Options::object_size / 2, 0) + sf::Vector2f(0, (objects[0].size() - 1) * Options::object_size / 2);
 			vertexes[1].position = vertexes[0].position + sf::Vector2f(0, Options::object_size / 4);
-			window.draw(vertexes, 2, sf::Lines);
+			window.window.draw(vertexes, 2, sf::Lines);
 		}
 }
 
@@ -246,7 +278,7 @@ void Map_Editor::key_pressed(sf::Keyboard::Key key)
 		object = NONE;
 		break;
 	}
-	case sf::Keyboard::P:
+	case sf::Keyboard::B:
 	{
 		place_object = true;
 		object = POWERUP;
@@ -274,20 +306,78 @@ void Map_Editor::key_pressed(sf::Keyboard::Key key)
 	}
 	case sf::Keyboard::S:
 	{
-		static std::vector<int> saved_data;
-		if (saved_data.size() == 0)
+		Window game_window("PacMan");
+		game_window.window.setFramerateLimit(Options::fps);
+		Map_Loader loader(window, get_paths(), get_objects(), {}, {});
+		std::vector<Line> walls = loader.get_walls();
+		std::vector<std::vector<Peer>> peers = loader.get_peers();
+		std::vector<PacMan*> pacmans;
+		std::vector<Entity*> entities;
+		for (int i = 0; i < objects.size(); i++)
+			for (int j = 0; j < objects[0].size(); j++)
+				if (objects[i][j] == STARTPOS)
+				{
+					pacmans.emplace_back(new PacMan(sf::Color::Yellow, sf::Vector2f(i, j), std::chrono::high_resolution_clock::now()));
+					entities.push_back(pacmans.back());
+				}
+				else if (objects[i][j] == GHOST1)
+					entities.push_back(new Ghost(sf::Color::Red, sf::Vector2f(i, j), std::chrono::high_resolution_clock::now()));
+		Game game(game_window.window, walls, entities, peers);
+		Input input;
+		input.get_input1(*entities[0]);
+		input.get_input2(*entities[1]);
+		for (;;)
 		{
-			saved_data = save();
-			resize_map(0, 0);
+			game_window.window.clear();
+			sf::Event event;
+			if (game_window.window.pollEvent(event))
+			{
+				game_window.run(event);
+				if (event.type == sf::Event::KeyPressed)
+				{
+					input.run(event.key.code);
+				}
+			}
+			game.run();
+			for (PacMan* pacman : pacmans)
+				pacman->eat(game.eat(pacman->peer));
+			game_window.window.display();
+			if (!game_window.window.isOpen())
+				break;
 		}
-		else
-			load(saved_data);
+		for (Entity* entity : entities)
+			delete entity;
+		break;
+	}
+	case sf::Keyboard::P:
+	{
+		sf::Vector2i pos = get_peer(sf::Mouse::getPosition(window.window));
+		if (pos.x >= 0 && pos.y >= 0 && pos.x < objects.size() && pos.y < objects[0].size())
+			objects[pos.x][pos.y] = STARTPOS;
+		break;
+	}
+	case sf::Keyboard::G:
+	{
+		sf::Vector2i pos = get_peer(sf::Mouse::getPosition(window.window));
+		if (pos.x >= 0 && pos.y >= 0 && pos.x < objects.size() && pos.y < objects[0].size())
+			objects[pos.x][pos.y] = GHOST1;
 		break;
 	}
 	case sf::Keyboard::L:
 	{
-		Map_Loader ml(lines, objects, load_bridges(horizontal_bridges), load_bridges(vertical_bridges));
-		ml.run();
+		Window w("Map Loader");
+		Map_Loader loader(w, lines, objects, load_bridges(horizontal_bridges), load_bridges(vertical_bridges));
+		for (;;)
+		{
+			sf::Event event;
+			w.window.pollEvent(event);
+			w.window.clear();
+			w.run(event);
+			if (!loader.run(event))
+				break;
+			w.window.display();
+		}
+		break;
 	}
 	default:
 		break;
@@ -300,8 +390,15 @@ void Map_Editor::print()
 	for (const auto& row : objects)
 		for (Object object : row)
 			std::cout << object << " ";
+	//for (bool b : horizontal_bridges)
+	//	std::cout << b;
+	//std::cout << std::endl;
+	//for (bool b : vertical_bridges)
+	//	std::cout << b;
+	//std::cout << std::endl;
 	for (const Line& line : lines)
 		std::cout << line.A.x << " " << line.A.y << " " << line.B.x << " " << line.B.y << " ";
+	std::cout << std::endl << "--------------------------------------------------------" << std::endl;
 }
 
 std::vector<int> Map_Editor::save()
@@ -328,7 +425,7 @@ void Map_Editor::load(const std::vector<int>& data)
 	lines.clear();
 	if (data.size() < 2)
 		return;
-	if (data.size() < data[0] * data[1])
+	if (data.size() < data[0] * data[1] + data[0] + data[1])
 		return;
 	resize_map(data[0], data[1]);
 	int index = 2;
@@ -342,25 +439,24 @@ void Map_Editor::load(const std::vector<int>& data)
 		lines.insert(Line(sf::Vector2i(data[index], data[index + 1]), sf::Vector2i(data[index + 2], data[index + 3])));
 }
 
-void Map_Editor::run()
+bool Map_Editor::run()
 {
-	if (!window.isOpen())
-		return;
-	if (!window.hasFocus())
-		return;
+	if (!window.window.isOpen())
+		return false;
+	if (!window.window.hasFocus())
+		return true;
 	sf::Event event;
-	if (window.pollEvent(event))
+	if (window.window.pollEvent(event))
 	{
 		switch (event.type)
 		{
 		case sf::Event::Closed:
 		{
-			window.close();
-			return;
+			return false;
 		}
 		case sf::Event::MouseButtonPressed:
 		{
-			path_buffer.pos = get_peer_pos(get_peer(sf::Mouse::getPosition(window)));
+			path_buffer.pos = get_peer_pos(get_peer(sf::Mouse::getPosition(window.window)));
 			path_buffer.is_active = true;
 			if (event.mouseButton.button == sf::Mouse::Left)
 				path_buffer.is_creating = true;
@@ -414,12 +510,23 @@ void Map_Editor::run()
 		}
 	}
 	if (path_buffer.is_active)
-		update_buffer(sf::Mouse::getPosition(window));
+		update_buffer(sf::Mouse::getPosition(window.window));
 	else if (place_object)
 	{
-		sf::Vector2i pos = get_peer(sf::Mouse::getPosition(window));
+		sf::Vector2i pos = get_peer(sf::Mouse::getPosition(window.window));
 		if (pos.x >= 0 && pos.y >= 0 && pos.x < objects.size() && pos.y < objects[0].size())
 			objects[pos.x][pos.y] = object;
 	}
 	draw();
+	return true;
+}
+
+std::vector<std::vector<Object>> Map_Editor::get_objects()
+{
+	return objects;
+}
+
+std::unordered_set<Line, LineHash> Map_Editor::get_paths()
+{
+	return lines;
 }

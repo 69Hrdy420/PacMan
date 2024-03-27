@@ -15,9 +15,15 @@ BodyPart& BodyPart::operator=(const BodyPart& other)
     return *this;
 }
 
-void BodyPart::draw(sf::RenderWindow& window, sf::Vector2f pos, sf::Color color)
+void BodyPart::draw(sf::RenderWindow& window, sf::Vector2f pos, sf::Color color, int rotation)
 {
 	shape.setFillColor(color);
 	shape.setPosition(pos + local_pos);
+    shape.setRotation(rotation);
 	window.draw(shape);
+}
+
+void BodyPart::resize(float scale)
+{
+    local_pos *= scale;
 }

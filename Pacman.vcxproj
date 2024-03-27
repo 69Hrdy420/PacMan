@@ -130,27 +130,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BodyPart.cpp" />
+    <ClCompile Include="cmd.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ghost.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Map_Loader.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Map_Editor2.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="PacMan.cpp" />
     <ClCompile Include="Shapes.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Window2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BodyPart.h" />
+    <ClInclude Include="cmd.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Ghost.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Map_Editor2.h" />
     <ClInclude Include="Map_Loader.h" />
     <ClInclude Include="Map_Structures.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="PacMan.h" />
     <ClInclude Include="Shapes.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="Window2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

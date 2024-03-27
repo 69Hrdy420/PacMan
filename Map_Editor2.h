@@ -1,11 +1,17 @@
 #pragma once
 #include "Map_Loader.h"
+#include "Game.h"
+#include "Input.h"
 
 class Map_Editor
 {
 public:
-	Map_Editor(sf::RenderWindow& window, uint16_t width, uint16_t height);
-	void run();
+	Map_Editor(Window& window, uint16_t width, uint16_t height);
+	bool run();
+	void load(const std::vector<int>& data);
+	std::vector<std::vector<Object>> get_objects();
+	std::unordered_set<Line, LineHash> get_paths();
+	void print();
 private:
 	struct Path_Buffer
 	{
@@ -15,11 +21,9 @@ private:
 	}; 
 	void resize_map(uint16_t x, uint16_t y);
 	void key_pressed(sf::Keyboard::Key key);
-	void print();
-	void load(const std::vector<int>& data);
 	std::vector<int> save();
 
-	sf::RenderWindow& window;
+	Window& window;
 	sf::RectangleShape local_bounds;
 	sf::Vector2i mouse_pos;
 

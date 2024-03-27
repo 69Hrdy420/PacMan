@@ -1,11 +1,31 @@
 #include "Map_Loader.h"
 #include <SFML/Graphics.hpp>
-#include <iostream>
+
 const sf::Vector2f start_pos(100.f, 100.f);
 
-Map_Loader::Map_Loader(const std::unordered_set<Line, LineHash>& paths, const std::vector<std::vector<Object>>& objects, const std::vector<int>& horizontal_bridges, const std::vector<int>& vertical_bridges)
+//#include <iostream>
+//Map_Loader::Map_Loader(const Map_Loader& other)
+//    :window(*(new Window("loader")))
+//{
+//    std::cout << "copy loader" << std::endl;
+//}
+//Map_Loader& Map_Loader::operator=(const Map_Loader& other)
+//{
+//    std::cout << "operator loader" << std::endl;
+//    Window w("w");
+//    std::unordered_set<Line, LineHash> s;
+//    std::vector<std::vector<Object>> o;
+//    std::vector<int> i;
+//    return *(new Map_Loader(w, s, o, i, i));
+//}
+
+Map_Loader::Map_Loader(Window& window, const std::unordered_set<Line, LineHash>& paths, const std::vector<std::vector<Object>>& objects, const std::vector<int>& horizontal_bridges, const std::vector<int>& vertical_bridges)
+    :window(window)
 {
-    window.create(sf::VideoMode(1200, 1000), "Map Loader");
+    if (!window.window.isOpen())
+        window.create("Map Loader");
+    else
+        window.window.setTitle("Map Loader");
     if (paths.empty())
         return;
     peers = load_peers(paths, sf::Vector2i(objects.size(), objects[0].size()));
@@ -52,45 +72,72 @@ std::unordered_set<Line, LineHash> Map_Loader::load_bridges(std::unordered_set<L
 
 void Map_Loader::draw()
 {
-    window.clear();
     draw_walls();
     draw_objects();
-    window.display();
 }
 
 void Map_Loader::draw_objects()
 {
-    sf::CircleShape coin(5.f, 24);
+    sf::CircleShape peer(Options::object_size / 60, Options::num_circle_points);
+    peer.setFillColor(sf::Color::White);
+    peer.setOrigin((peer.getRadius()), (peer.getRadius()));
+
+    sf::CircleShape coin(Options::object_size / 15, Options::num_circle_points);
     coin.setFillColor(sf::Color::Yellow);
     coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+
     for (int x = 0; x < peers.size(); x++)
     {
         for (int y = 0; y < peers[0].size(); y++)
             if (peers[x][y].object == COIN)
             {
                 coin.setPosition(static_cast<sf::Vector2f>(start_pos + Options::object_size / 2 * sf::Vector2f(x, y)));
-                window.draw(coin);
+                window.window.draw(coin);
+            }
+            else if (peers[x][y].object == STARTPOS)
+            {
+                coin.setFillColor(sf::Color::Green);
+                coin.setRadius(Options::object_size / 7.5);
+                coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+                coin.setPosition(static_cast<sf::Vector2f>(start_pos + Options::object_size / 2 * sf::Vector2f(x, y)));
+                window.window.draw(coin);
+                coin.setFillColor(sf::Color::Yellow);
+                coin.setRadius(Options::object_size / 15);
+                coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+            }
+            else if (peers[x][y].object == GHOST1)
+            {
+                coin.setFillColor(sf::Color::Red);
+                coin.setRadius(Options::object_size / 7.5);
+                coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+                coin.setPosition(static_cast<sf::Vector2f>(start_pos + Options::object_size / 2 * sf::Vector2f(x, y)));
+                window.window.draw(coin);
+                coin.setFillColor(sf::Color::Yellow);
+                coin.setRadius(Options::object_size / 15);
+                coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+            }
+            else if (peers[x][y].object == POWERUP)
+            {
+                coin.setRadius(Options::object_size / 7.5);
+                coin.setOrigin((coin.getRadius()), (coin.getRadius()));
+                coin.setPosition(static_cast<sf::Vector2f>(start_pos + Options::object_size / 2 * sf::Vector2f(x, y)));
+                window.window.draw(coin);
+                coin.setRadius(Options::object_size / 15);
+                coin.setOrigin((coin.getRadius()), (coin.getRadius()));
             }
     }
 }
 
-void Map_Loader::run()
+bool Map_Loader::run(const sf::Event& event)
 {
-    bool run = true;
-    while (run)
-    {
-        if (!window.isOpen())
-            return;
-        if (!window.hasFocus())
-            return;
-        sf::Event event;
-        if (window.pollEvent(event))
-        {
-            if (event.type == event.KeyPressed)
-                run = false;
-        }
-        draw();
-    }
+    if (!window.window.isOpen())
+        return false;
+    if (!window.window.hasFocus())
+        return true;
+    if (event.type == event.KeyPressed)
+        return false;
+    draw();
+    return true;
 }
 
 std::unordered_set<Line, LineHash> Map_Loader::load_walls(const std::unordered_set<Line, LineHash>& paths)
@@ -105,7 +152,6 @@ std::unordered_set<Line, LineHash> Map_Loader::load_walls(const std::unordered_s
             load_horizontal_wall(line, walls_copy, paths);
     }
     return walls_copy;
-    //walls = get_optimized_walls(std::move(walls_copy));
 }
 
 void Map_Loader::load_vertical_wall(const Line& line, std::unordered_set<Line, LineHash>& set, const std::unordered_set<Line, LineHash>& paths)
@@ -242,23 +288,6 @@ void Map_Loader::load_horizontal_wall(const Line& line, std::unordered_set<Line,
         set.insert(Line(sf::Vector2i(line.A.x, line.A.y + 1), sf::Vector2i(line.B.x, line.B.y + 1)));            // insert path below
 }
 
-//void Map_Loader::draw_paths() 
-// {
-//
-//    for (const Line& line : paths)
-//    {
-//        sf::Vector2f scaledA = static_cast<sf::Vector2f>(line.A) * Options::object_size / 2.f + start_pos;
-//        sf::Vector2f scaledB = static_cast<sf::Vector2f>(line.B) * Options::object_size / 2.f + start_pos;
-//        sf::Vertex lineVertices[] =
-//        {
-//            sf::Vertex(scaledA),
-//            sf::Vertex(scaledB)
-//        };
-//        window.draw(lineVertices, 2, sf::Lines);
-//    }
-//
-//}
-
 void Map_Loader::draw_walls()
 {
     for (const Line& line : walls)
@@ -270,7 +299,7 @@ void Map_Loader::draw_walls()
             sf::Vertex(scaledA, sf::Color::Blue),
             sf::Vertex(scaledB, sf::Color::Blue)
         };
-        window.draw(lineVertices, 2, sf::Lines);
+        window.window.draw(lineVertices, 2, sf::Lines);
     }
 }
 
@@ -286,7 +315,7 @@ bool Map_Loader::is_horizontal(const Line& line)
 
 std::vector<std::vector<Peer>> Map_Loader::load_peers(const std::unordered_set<Line, LineHash>& paths, sf::Vector2i size)
 {
-    std::vector<std::vector<Peer>> result(size.y, std::vector<Peer>(size.x));
+    std::vector<std::vector<Peer>> result(size.x, std::vector<Peer>(size.y));
     for (const Line path : paths)
     {
         if (paths.find(Line(sf::Vector2i(path.A.x - 1, path.A.y), path.A)) != paths.end())
@@ -307,34 +336,6 @@ std::vector<std::vector<Peer>> Map_Loader::load_peers(const std::unordered_set<L
         if (paths.find(Line(sf::Vector2i(path.B.x, path.B.y + 1), path.B)) != paths.end())
             result[path.B.x][path.B.y].down = true;
     }
-    //for (int i = 0; i < result.size(); i++)
-    //    for (int j = 0; j < result[0].size(); j++)
-    //    {
-    //        bool interesting = false;
-    //        std::string data = std::to_string(i) + " " + std::to_string(j) + "\n";
-    //        if (result[i][j].down)
-    //        {
-    //            interesting = true;
-    //            data += "down\n";
-    //        }
-    //        if (result[i][j].up) 
-    //        {
-    //            interesting = true;
-    //            data += "up\n";
-    //        }
-    //        if (result[i][j].left) 
-    //        {
-    //            interesting = true;
-    //            data += "left\n";
-    //        }
-    //        if (result[i][j].right) 
-    //        {
-    //            interesting = true;
-    //            data += "right\n";
-    //        }
-    //        if (interesting)
-    //            std::cout << data << "----------------------------------------" << std::endl;
-    //    }
     return result;
 }
 
@@ -376,4 +377,13 @@ std::vector<Line> Map_Loader::load_optimized_walls(std::unordered_set<Line, Line
     }
     new_walls.shrink_to_fit();
     return new_walls;
+}
+
+std::vector<Line> Map_Loader::get_walls()
+{
+    return walls;
+}
+std::vector<std::vector<Peer>> Map_Loader::get_peers()
+{
+    return peers;
 }

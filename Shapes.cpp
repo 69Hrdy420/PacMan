@@ -1,10 +1,10 @@
 #include "Shapes.h"
-#include <iostream>
 
 static const float PI = 3.141592653589;
 
 std::vector<sf::ConvexShape> Shapes::shapes = std::vector<sf::ConvexShape>(4);
 Shapes Shapes::instance;
+float Shapes::scale = 1;
 
 sf::ConvexShape& Shapes::get(int name)
 {
@@ -16,7 +16,9 @@ Shapes::Shapes()
 	create_ghost_upperbody();
 	create_ghost_legs();
     create_pacman();
+    resize(0.4);
 }
+
 void Shapes::create_ghost_upperbody()
 {
     uint16_t head_points = Options::num_circle_points / 2;
@@ -34,8 +36,8 @@ void Shapes::create_ghost_upperbody()
     }
     upperbody.setPoint(0, { size, size });
     upperbody.setPoint(head_points + 1, { -size, size });
-    std::cout << upperbody.getOrigin().x << ":" << upperbody.getOrigin().y << std::endl;
 }
+
 void Shapes::create_ghost_legs()
 {
     uint16_t num_points = Options::num_circle_points / 4;       
@@ -56,12 +58,11 @@ void Shapes::create_ghost_legs()
     }
     quater_circle1.setPoint(0, { 0, 0 });
     quater_circle2.setPoint(0, { 0, 0 });
-    std::cout << quater_circle1.getOrigin().x << ":" << quater_circle1.getOrigin().y << std::endl;
-    std::cout << quater_circle1.getOrigin().x << ":" << quater_circle1.getOrigin().y << std::endl;
 }
+
 void Shapes::create_pacman()
 {
-    sf::ConvexShape& circle = shapes[PACMAN];
+    sf::ConvexShape& circle = shapes[PACMAN_BODY];
     circle.setPointCount(Options::num_circle_points + 1);
     for (int index = 1; index <= Options::num_circle_points; index++)
     {
@@ -71,4 +72,20 @@ void Shapes::create_pacman()
         circle.setPoint(index, { x, y });
     }
     circle.setPoint(0, circle.getPoint(Options::num_circle_points));
+}
+
+void Shapes::resize(float scale)
+{
+    for (sf::ConvexShape& shape : shapes)
+    {
+        sf::Vector2f origin = shape.getOrigin();
+        for (int i = 0; i < shape.getPointCount(); i++)
+            shape.setPoint(i, origin - (origin - shape.getPoint(i)) * scale);
+    }
+    Shapes::scale *= scale;
+}
+
+float Shapes::get_scale()
+{
+    return scale;
 }

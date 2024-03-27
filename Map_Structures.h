@@ -6,8 +6,9 @@
 
 enum Object
 {
-    NONE = 0, COIN = 1, POWERUP = 2
+    NONE = 0, COIN = 1, POWERUP = 2, STARTPOS = 3, GHOST1 = 4
 };
+
 struct Peer
 {
     bool left = false;
@@ -15,10 +16,6 @@ struct Peer
     bool up = false;
     bool down = false;
     Object object = NONE;
-    //int left = -1;
-    //int right = -1;
-    //int up = -1;
-    //int down = -1;
 };
 struct Line
 {
