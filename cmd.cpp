@@ -6,6 +6,7 @@ void cmd::run()
 	{
 		std::cout << "press 'h' for help" << std::endl;
 		char c = std::cin.get();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		switch (c)
 		{
 		case 'h':
@@ -22,13 +23,13 @@ void cmd::run()
 			std::cout << "g - game guide" << std::endl;
 			std::cout << "e - exit GUIDE MODE" << std::endl;
 			std::cout << "-------------------" << std::endl;
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			bool exit = false;
 			while (!exit)
 			{
 				std::cout << "GUIDE MODE" << std::endl;
 				std::cout << "----------" << std::endl;
 				char d = std::cin.get();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				switch (d)
 				{
 				case 'e':
@@ -70,7 +71,6 @@ void cmd::run()
 				default:
 					break;
 				}
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			}
 			break;
 		}
