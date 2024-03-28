@@ -2,6 +2,8 @@ About project
 
 I created this to improve certain skills - for example I tried to implement inheritance, also tried to play sets, maps and sfml in general. I didnt try to do everything the most efficient way. Sometimes I even experimented with few things just to see if they would work. 
 
+It is also my first bigger project so if I would write this again, I would organize the code a bit differently. 
+
 The project is not finished, because it took me a bit longer, then I expected and I want to have something that I can show right now. However I think it presentable at this point.
 
 ---------------------------------------------------------------------------
