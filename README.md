@@ -19,4 +19,4 @@ These are tutorials I used to link up the library:
   
     without VCPKG - https://www.youtube.com/watch?v=yEiZalvDOj4&list=PL6xSOsbVA1eaJnHo_O6uB4qU8LZWzzKdo
 
-I dont know if this is my problem or everyones, but I can not debug the same code twice with sfml libary. When I do, it tells me that some dll files are missing. To fix the problem, add comment anywhere in code (using //) to make it a bit different. Then you should be able to debug again.
+I dont know if this is my problem or everyones, but I can not debug the same code twice with sfml libary. When I do, it tells me that some dll files are missing. To fix the problem, add comment anywhere in code (just "//" is enough), so compiler has to compile it again. Then you should be able to debug again.
